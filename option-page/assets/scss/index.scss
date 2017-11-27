@@ -1,0 +1,158 @@
+@import "variables";
+
+html, 
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: $background-color;
+    font-size: medium;
+    min-height: 93%;
+}
+
+body {
+    border-top: 2px solid $light-blue;
+}
+
+img {
+    display: block;
+    margin: 50px auto 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin: 10px auto;
+    font-size: 2em;
+    color: #ccc;
+
+    &:before,
+    &:after {
+        content: " - ";
+    }
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 0.8em;
+}
+
+.history {
+    margin-top: 25px;
+
+    table {
+        width: 100%;
+
+        tr {
+            &:hover{
+                td {
+                    background-color: darken($background-color, 15%);
+                }
+            }
+        }
+
+        td, th {
+            text-align: center;
+            max-width: 375px;
+            vertical-align: middle !important;
+        }
+
+        td{
+            height: 35px;
+
+            &:nth-child(2n) {
+                background-color: white;
+                overflow: hidden;
+            }
+
+            &:nth-child(2) {
+                text-align: left;
+                padding-left: 20px;
+            }
+
+            &:last-child{
+                min-width: 40px;
+            }
+        }
+
+        th {
+            height: 50px;
+        }
+    }
+}
+
+.excluded {
+    h2 {
+        margin-bottom: 25px;
+    }
+
+    .row {
+        border-radius: 10px;
+
+        div {
+            padding: 10px 0;
+            height: 35px;
+
+            &:first-child{
+                text-align: center;
+            }
+        }
+
+        &:nth-child(2n) {
+            background-color: white;
+        }
+
+        .remove {
+            text-align: center;
+            cursor: pointer;
+            transition: 0.15s background-color; 
+
+            .glyphicon-remove {
+                color: red;
+            }
+
+            &:hover {
+                background-color: darken($background-color, 15%);
+            }
+        }
+    }
+
+    button {
+        margin-top: 25px;
+    }
+
+}
+
+
+@media screen and (max-width: 767px) {
+
+    .history,
+    .excluded{
+        margin: 50px 15px;
+
+        h2 {
+            margin-left: 25px;
+        }
+    }
+
+    .history { 
+        table {
+            th,
+            td {
+                font-size: 0.8em;
+            }
+
+            td {
+                &:nth-child(2) {
+                    padding-left: 10px;
+                }
+            }
+        }
+    }
+
+    footer {
+        position: relative;
+    }
+}
