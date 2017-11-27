@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Noto+Sans);
+@import url(https://fonts.googleapis.com/css?family=Poppins);
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -6,6 +6,9 @@
 html{
   width: 280px;
   height: 450px;
+}
+body {
+    font-family: 'Poppins';font-size: 13px;
 }
 header {
   width:100%;
@@ -75,10 +78,11 @@ footer {
 }
 .container3 {
   position: absolute;
-  top: 48%;
-  left: 45%;
+  top: 49%;
+  left: 42%;
   transform: translate(-50%, -50%);  
 }
+
 
 
 input {
@@ -90,7 +94,7 @@ label {
   display: block;
   position: relative;
   margin: 20px;
-  padding: 3px 30px 7px 50px;
+  padding: 2px 30px 6px 50px;
   border: 3px solid #fff;
   border-radius: 100px;
   color: #fff;
