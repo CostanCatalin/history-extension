@@ -48,6 +48,19 @@ footer {
   justify-content: center;
   align-items: center;
 }
+footer a {
+  width: 100%;
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.15s all;
+}
+footer a:hover {
+  background-color: #304163;
+}
+footer a .footer-text {
+    color: white;
+}
 .fa-cog {
   color: #000;
   padding: 10px;
@@ -63,6 +76,10 @@ footer {
     
 }
 
+.container,
+.container2 {
+  width: 90%;
+}
 
 .container {
   position: absolute;
