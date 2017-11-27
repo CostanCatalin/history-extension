@@ -5,11 +5,10 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: $background-color;
     font-size: medium;
-    min-height: 93%;
 }
 
 body {
-    border-top: 2px solid $light-blue;
+    border-top: 3px solid $light-blue;
 }
 
 img {
@@ -29,8 +28,12 @@ h1 {
     }
 }
 
+h2 {
+    margin-bottom: 25px;
+}
+
 footer {
-    position: absolute;
+    position: relative;
     bottom: 0;
     left: 0;
     right: 0;
@@ -84,10 +87,6 @@ footer {
 }
 
 .excluded {
-    h2 {
-        margin-bottom: 25px;
-    }
-
     .row {
         border-radius: 10px;
 
@@ -111,10 +110,13 @@ footer {
 
             .glyphicon-remove {
                 color: red;
+                margin-right: 10px;
             }
 
             &:hover {
                 background-color: darken($background-color, 15%);
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
             }
         }
     }
@@ -150,9 +152,5 @@ footer {
                 }
             }
         }
-    }
-
-    footer {
-        position: relative;
     }
 }

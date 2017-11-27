@@ -23,6 +23,14 @@ gulp
 will compile the files and start watching for scss and js changes
 
 
+## Built With
+
+* [Bootstrap](https://getbootstrap.com/docs/3.3/) -  Front-end framework
+* [jQuery](https://jquery.com/) - JavaScript library
+* [Gulp](https://gulpjs.com/) -  Toolkit for automation
+* [Sass](http://sass-lang.com/) - CSS extension
+
+
 ## Authors
 * **Catalin Costan**
 * **Raluca Plugariu**
