@@ -1,0 +1,275 @@
+@import url(https://fonts.googleapis.com/css?family=Noto+Sans);
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html{
+  width: 280px;
+  height: 450px;
+}
+header {
+  width:100%;
+  height: 67px;
+  background-color: #aaaaaa;
+  position: relative;
+}
+
+.fa-picture-o {
+  top: 48%;
+  left: 39%;
+  position: absolute;
+  width: 67px;
+  height: 67px;
+
+
+}
+aside {
+  width:100%;
+  height: 70vh;
+  padding-top: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #e0e0eb;
+}
+hr {
+  width: 80%;
+}
+footer {
+  width: 100%;
+  height: 50px;
+  background-color: #516c8d;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fa-cog {
+  color: #000;
+  padding: 10px;
+}
+
+.fa-check {
+  color: #000;
+  padding: 10px;
+
+}
+.fa-check:before{
+    color: green;
+    
+}
+
+
+.container {
+  position: absolute;
+  top: 31%;
+  left: 36%;
+  transform: translate(-50%, -50%);  
+}
+.container2 {
+  position: absolute;
+  top: 39%;
+  left: 36%;
+  transform: translate(-50%, -50%);  
+}
+.container3 {
+  position: absolute;
+  top: 48%;
+  left: 45%;
+  transform: translate(-50%, -50%);  
+}
+
+
+input {
+  position: absolute;
+  left: -9999px;
+}
+
+label {
+  display: block;
+  position: relative;
+  margin: 20px;
+  padding: 3px 30px 7px 50px;
+  border: 3px solid #fff;
+  border-radius: 100px;
+  color: #fff;
+  background-color: #6a8494;
+  box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color .2s, box-shadow .2s;
+}
+
+label::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 10px;
+  width: 20px;
+  border: 3px solid #fff;
+  border-radius: 100px;
+  transition: background-color .2s;
+}
+
+label:first-of-type {
+  transform: translateX(-40px);
+}
+
+label:last-of-type {
+  transform: translateX(40px);
+}
+
+label:hover, input:focus + label {
+  box-shadow: 0 0 20px rgba(0, 0, 0, .6);
+}
+
+input:checked + label {
+  background-color: #ab576c;
+}
+
+input:checked + label::before {
+  background-color: #fff;
+}
+.checkbox2{
+    position: absolute;
+  top: 40%;
+  left: 36%;
+  transform: translate(-50%, -50%); 
+}
+
+
+.label--checkbox {
+  position: relative;
+
+  margin: .5rem;
+  
+  font-family: Arial, sans-serif;
+  line-height: 135%;
+  
+  cursor: pointer;
+}
+
+.checkbox {
+  position: relative;
+  top: rem(-6);
+  
+  margin: 0 1rem 0 0 ;
+  
+  cursor: pointer;
+  
+  &:before {
+		@include transition(all .3s ease-in-out);
+    
+		content: "";
+    
+		position: absolute;
+		left: 0;
+		z-index: 1;
+  
+		width: 1rem;
+		height: 1rem;
+    
+		border: 2px solid #f2f2f2; 
+  }
+  
+  &:checked {
+    &:before {
+       @include transform(rotate(-45deg));
+  
+  		height: .5rem;
+  
+  		border-color: $green;
+  		border-top-style: none;
+  		border-right-style: none;
+    } 
+  }
+  
+  &:after {
+    content: "";
+    
+    position: absolute;
+    top: rem(-2);
+    left: 0;
+    
+    width: 1.1rem;
+    height: 1.1rem;
+    
+    background: #fff;
+    
+    cursor: pointer;
+  }
+}
+
+.button--round { 
+  @include transition(.3s background ease-in-out);
+  
+  width: 2rem;
+  height: 2rem;
+  
+  background: $blue;
+  
+  border-radius: 50%;
+  box-shadow: 0 rem(2) rem(5) 0 rgba(0, 0, 0, 0.25);
+  
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  
+  i {
+    font-size: 1rem;
+    line-height: 220%;
+    vertical-align: middle;
+  }
+  
+  &:hover {
+    background: $blueDark;
+  }
+}
+
+.button--sticky {
+  position: fixed;
+  right: 2rem;
+  top: 16rem;
+}
+
+%slide-up {
+  -webkit-animation-duration: $slideDuration;
+  animation-duration: $slideDuration;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: slideUp;
+  animation-name: slideUp;
+  -webkit-animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@-webkit-keyframes slideUp {
+  0% {
+    -webkit-transform: translateY(rem($slideDistance));
+    transform: translateY(rem($slideDistance));
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    -webkit-transform: translateY(rem($slideDistance));
+    transform: translateY(rem($slideDistance));
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+
+
