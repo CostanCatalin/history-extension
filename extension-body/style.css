@@ -105,7 +105,7 @@ footer a .footer-text {
 .container2 label {
   display: block;
   position: relative;
-  margin: 20px;
+  margin: 0 20px;
   padding: 2px 30px 6px 50px;
   border: 3px solid #fff;
   border-radius: 100px;
@@ -141,6 +141,11 @@ label:hover, input:focus + label {
   box-shadow: 0 0 20px rgba(0, 0, 0, .6);
 }
 
+.container3 label:hover,
+.container3 input:focus + label {
+  box-shadow: none;
+}
+
 input:checked + label {
   background-color: #ab576c;
 }
@@ -149,7 +154,7 @@ input:checked + label::before {
   background-color: #fff;
 }
 .checkbox2{
-    position: absolute;
+  position: absolute;
   top: 40%;
   left: 36%;
   transform: translate(-50%, -50%); 
