@@ -83,31 +83,26 @@ footer a .footer-text {
 
 .container {
   position: absolute;
-  top: 31%;
+  top: 29%;
   left: 36%;
   transform: translate(-50%, -50%);  
 }
 .container2 {
   position: absolute;
-  top: 39%;
+  top: 37%;
   left: 36%;
   transform: translate(-50%, -50%);  
 }
 .container3 {
   position: absolute;
-  top: 49%;
-  left: 42%;
+  width: 90%;
+  left: 61%;
+  top: 48%;
   transform: translate(-50%, -50%);  
 }
 
-
-
-input {
-  position: absolute;
-  left: -9999px;
-}
-
-label {
+.container label,
+.container2 label {
   display: block;
   position: relative;
   margin: 20px;
@@ -123,7 +118,8 @@ label {
   transition: background-color .2s, box-shadow .2s;
 }
 
-label::before {
+.container label:before,
+.container2 label::before {
   content: '';
   display: block;
   position: absolute;
@@ -136,11 +132,8 @@ label::before {
   transition: background-color .2s;
 }
 
-label:first-of-type {
-  transform: translateX(-40px);
-}
-
-label:last-of-type {
+.container label,
+.container2 label {
   transform: translateX(40px);
 }
 
