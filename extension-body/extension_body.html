@@ -1,37 +1,46 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
-<link rel="stylesheet" type="text/css" href="style.css">
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UpdateR</title>
+  <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
 
-<script src="main.js"></script>
-<header>
-  <img class="fa fa-picture-o fa-5x" aria-hidden="true" src="icon128.png"></img>
-</header>
-<aside>
+<body>
+  <script src="main.js"></script>
+  
+  <header>
+    <img class="logo" aria-hidden="true" src="img/logo.png"></img>
+  </header>
+
+  <main>
     <script src="jscolor.js"></script>
-  <hr>
-  <div class="container">
-  <input id="toggle1" type="checkbox" checked>
-       <label for="toggle1">Enable on this site</label>
-</div>
-<hr>
-    <div class="container2">
-    <input type="checkbox" id="test1" />
-    <label for="test1">Show number in icon </label>
+
+    <div class="container container-1">
+      <input type="checkbox" id="is-enabled" checked>
+      <label for="is-enabled">Enable on this site</label>
     </div>
 
-  <hr>
-    <div class= "container3">
-      <label for="hi-color">Default highlight color: </label> 
+    <div class="container container-2">
+      <input type="checkbox" id="icon-number" />
+      <label for="icon-number">Show number in icon</label>
+    </div>
+
+    <div class="container container-3">
+      <label for="hi-color">Current highlight color:</label> 
       <input id="hi-color" type="color" value="#fff385"/> 
     </div>
-  <hr>
-      <div class= "dif">
-    <span><font size="4">Differences since last visit</font></span>
+
+    <div class="differences">
+      <h2>Differences since last visit:</h2>
+      <h1>15</h1>
     </div>
-  <h1>15</h1>
-</aside>
-<footer>
-  <a href="file:///D:/scoala/anul%203/semestrul%201/DAWNC/proiect/option-page/index.html" class="fa fa-cog fa-2x"  aria-hidden="true">
-    <span class="footer-text">Options</span>
-  </a>
-</footer>
+  </main>
+
+  <footer>
+    <a href="file:///D:/scoala/anul%203/semestrul%201/DAWNC/proiect/option-page/index.html">
+      <span class="footer-text">Options</span>
+    </a>
+  </footer>
+</body>
+</html>

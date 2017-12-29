@@ -1,111 +1,90 @@
-@import url(https://fonts.googleapis.com/css?family=Poppins);
-
 *, *::before, *::after {
   box-sizing: border-box;
 }
-html{
-  width: 280px;
-  height: 450px;
-}
-body {
-    font-family: 'Poppins';font-size: 13px;
-}
-header {
-  width:100%;
-  height: 67px;
-  background-color: #aaaaaa;
-  position: relative;
-}
 
-.fa-picture-o {
-  top: 48%;
-  left: 39%;
-  position: absolute;
-  width: 67px;
-  height: 67px;
-
-
-}
-aside {
-  width:100%;
-  height: 70vh;
-  padding-top: 10%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+html, body{
+  width: 300px;
+  min-height: 450px;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
   background-color: #e0e0eb;
 }
-hr {
-  width: 80%;
+
+header {
+  position: relative;
+  width:100%;
+  height: 70px;
+  background-color: #aaaaaa;
 }
+
+.logo {
+  position: relative;
+  top: 45px;
+  left: 12%;
+  width: 214px;
+  height: 50px;
+}
+
+main {
+  width: 100%;
+  padding-top: 65px;
+  text-align: center;
+}
+
 footer {
   width: 100%;
-  height: 50px;
   background-color: #516c8d;
   color: #fff;
-  display: flex;
-  justify-content: center;
   align-items: center;
 }
+
 footer a {
   width: 100%;
+  height: 50px;
   display: block;
   text-decoration: none;
   text-align: center;
   transition: 0.15s all;
 }
+
 footer a:hover {
   background-color: #304163;
 }
+
 footer a .footer-text {
-    color: white;
-}
-.fa-cog {
-  color: #000;
-  padding: 10px;
-}
-
-.fa-check {
-  color: #000;
-  padding: 10px;
-
-}
-.fa-check:before{
-    color: green;
-    
+  color: white;
+  font-size: 24px;
+  position: relative;
+  top: 5px;
 }
 
-.container,
-.container2 {
-  width: 90%;
+footer a .footer-text:before{
+  content: "";
+  display: block;
+  position: absolute;
+  left: -30px;
+  top: 5px;
+  background: url('img/cogwheel.png') no-repeat center center;
+  background-size: cover;
+  width: 25px;
+  height: 25px;
 }
 
 .container {
-  position: absolute;
-  top: 29%;
-  left: 36%;
-  transform: translate(-50%, -50%);  
-}
-.container2 {
-  position: absolute;
-  top: 37%;
-  left: 36%;
-  transform: translate(-50%, -50%);  
-}
-.container3 {
-  position: absolute;
-  width: 90%;
-  left: 61%;
-  top: 48%;
-  transform: translate(-50%, -50%);  
+  width: 225px;
+  margin: 0 auto;
 }
 
-.container label,
-.container2 label {
+.container + .container {
+  margin-top: 15px;
+}
+
+.container-1 label,
+.container-2 label {
   display: block;
   position: relative;
-  margin: 0 20px;
   padding: 2px 30px 6px 50px;
   border: 3px solid #fff;
   border-radius: 100px;
@@ -118,8 +97,8 @@ footer a .footer-text {
   transition: background-color .2s, box-shadow .2s;
 }
 
-.container label:before,
-.container2 label::before {
+.container-1 label:before,
+.container-2 label:before {
   content: '';
   display: block;
   position: absolute;
@@ -132,18 +111,13 @@ footer a .footer-text {
   transition: background-color .2s;
 }
 
-.container label,
-.container2 label {
-  transform: translateX(40px);
+.container-1 input[type=checkbox],
+.container-2 input[type=checkbox] {
+  display: none;
 }
 
 label:hover, input:focus + label {
   box-shadow: 0 0 20px rgba(0, 0, 0, .6);
-}
-
-.container3 label:hover,
-.container3 input:focus + label {
-  box-shadow: none;
 }
 
 input:checked + label {
@@ -153,142 +127,16 @@ input:checked + label {
 input:checked + label::before {
   background-color: #fff;
 }
-.checkbox2{
-  position: absolute;
-  top: 40%;
-  left: 36%;
-  transform: translate(-50%, -50%); 
+
+.container-3 label:hover {
+  box-shadow: none;
 }
 
-
-.label--checkbox {
-  position: relative;
-
-  margin: .5rem;
-  
-  font-family: Arial, sans-serif;
-  line-height: 135%;
-  
-  cursor: pointer;
+.differences {
+  padding: 10px;
 }
 
-.checkbox {
-  position: relative;
-  top: rem(-6);
-  
-  margin: 0 1rem 0 0 ;
-  
-  cursor: pointer;
-  
-  &:before {
-		@include transition(all .3s ease-in-out);
-    
-		content: "";
-    
-		position: absolute;
-		left: 0;
-		z-index: 1;
-  
-		width: 1rem;
-		height: 1rem;
-    
-		border: 2px solid #f2f2f2; 
-  }
-  
-  &:checked {
-    &:before {
-       @include transform(rotate(-45deg));
-  
-  		height: .5rem;
-  
-  		border-color: $green;
-  		border-top-style: none;
-  		border-right-style: none;
-    } 
-  }
-  
-  &:after {
-    content: "";
-    
-    position: absolute;
-    top: rem(-2);
-    left: 0;
-    
-    width: 1.1rem;
-    height: 1.1rem;
-    
-    background: #fff;
-    
-    cursor: pointer;
-  }
+.differences h1 {
+  font-size: 3em;
+  margin: 0;
 }
-
-.button--round { 
-  @include transition(.3s background ease-in-out);
-  
-  width: 2rem;
-  height: 2rem;
-  
-  background: $blue;
-  
-  border-radius: 50%;
-  box-shadow: 0 rem(2) rem(5) 0 rgba(0, 0, 0, 0.25);
-  
-  color: #fff;
-  text-decoration: none;
-  text-align: center;
-  
-  i {
-    font-size: 1rem;
-    line-height: 220%;
-    vertical-align: middle;
-  }
-  
-  &:hover {
-    background: $blueDark;
-  }
-}
-
-.button--sticky {
-  position: fixed;
-  right: 2rem;
-  top: 16rem;
-}
-
-%slide-up {
-  -webkit-animation-duration: $slideDuration;
-  animation-duration: $slideDuration;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-  -webkit-animation-name: slideUp;
-  animation-name: slideUp;
-  -webkit-animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@-webkit-keyframes slideUp {
-  0% {
-    -webkit-transform: translateY(rem($slideDistance));
-    transform: translateY(rem($slideDistance));
-  }
-
-  100% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  0% {
-    -webkit-transform: translateY(rem($slideDistance));
-    transform: translateY(rem($slideDistance));
-  }
-
-  100% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-}
-
-
-
