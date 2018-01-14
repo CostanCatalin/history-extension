@@ -1,43 +1,33 @@
-// TODO(DEVELOPER): Change the values below using values from the initialization snippet: Firebase Console > Overview > Add Firebase to your web app.
-// Initialize Firebase
 var config = {
-  apiKey: "AIzaSyCiax7KQGh6FVIO3zBAMumzs__qztux1CU",
-  databaseURL: "https://test-4b5f6.firebaseio.com",
-  storageBucket: "test-4b5f6.appspot.com"
+  authDomain: 'cliw-test.firebaseapp.com',
+  apiKey: "AIzaSyDNynAgYGkrXFQfoPrY2iScW8aT28yQmYk",
+  databaseURL: "https://cliw-test.firebaseio.com",
+  storageBucket: "gs://cliw-test.appspot.com/"
 };
+
 firebase.initializeApp(config);
 
-/**
- * initApp handles setting up the Firebase context and registering
- * callbacks for the auth status.
- *
- * The core initialization is in firebase.App - this is the glue class
- * which stores configuration. We provide an app name here to allow
- * distinguishing multiple app instances.
- *
- * This method also registers a listener with firebase.auth().onAuthStateChanged.
- * This listener is called when the user is signed in or out, and that
- * is where we update the UI.
- *
- * When signed in, we also authenticate to the Firebase Realtime Database.
- */
 function initApp() {
-  // Listen for auth state changes.
-  // [START authstatelistener]
+
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-      // User is signed in.
-      var displayName = user.displayName;
-      var email = user.email;
-      var emailVerified = user.emailVerified;
-      var photoURL = user.photoURL;
-      var isAnonymous = user.isAnonymous;
-      var uid = user.uid;
-      var providerData = user.providerData;
+      userId = firebase.auth().currentUser.uid;
 
+      // If new user, add default colour
+      firebase.database().ref('/users/' + userId).once('value', function(snapshot) {
+        if (snapshot.val() ==  null) {
+          firebase.database().ref('users/' + userId).set({
+            highlight_color: "#fff385"
+          });
+        }
+      });
     }    
     else{
-    	startAuth(true);
+      var email = "test@test.test";
+      var pass = "test1234";
+      
+      // startAuth(true);
+      loginWithCredentials(email, pass);
     }
   });
 
@@ -49,25 +39,31 @@ function initApp() {
  */
 function startAuth(interactive) {
   // Request an OAuth token from the Chrome Identity API.
-  chrome.identity.getAuthToken({interactive: !!interactive}, function(token) {
-    if (chrome.runtime.lastError && !interactive) {
-      console.log('It was not possible to get a token programmatically.');
-    } else if(chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-    } else if (token) {
-      // Authorize Firebase with the OAuth Access Token.
-      var credential = firebase.auth.GoogleAuthProvider.credential(null, token);
-      firebase.auth().signInWithCredential(credential).catch(function(error) {
-        // The OAuth token might have been invalidated. Lets' remove it from cache.
-        if (error.code === 'auth/invalid-credential') {
-          chrome.identity.removeCachedAuthToken({token: token}, function() {
-            startAuth(interactive);
-          });
-        }
-      });
-    } else {
-      console.error('The OAuth Token was null');
-    }
+  var provider = new firebase.auth.GoogleAuthProvider();
+  
+  firebase.auth().signInWithRedirect(provider).then(function(result) {
+  // This gives you a Google Access Token. You can use it to access the Google API.
+    var token = result.credential.accessToken;
+    // The signed-in user info.
+    var user = result.user;
+    // ...
+  }).catch(function(error) {
+    document.querySelector(".differences h2").innerText = error.message;
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // The email of the user's account used.
+    var email = error.email;
+    // The firebase.auth.AuthCredential type that was used.
+    var credential = error.credential;
+    // ...
+  });
+}
+
+function loginWithCredentials(email, pass) {
+  firebase.auth().signInWithEmailAndPassword(email, pass)
+  .catch(function(error) {
+    document.querySelector(".differences h2").innerText = error.message;
   });
 }
 
