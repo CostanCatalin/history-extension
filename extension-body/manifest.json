@@ -9,6 +9,16 @@
   },
   "permissions":
    [
-    "tabs"
-   ]
+    "tabs",
+    "identity"
+   ],
+   "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+  "oauth2": {
+       "client_id": "276656653154-7gdasqvodjvknbnlr4gj674plkjgkl6n.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ],
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtEfObG2w2mWCm2n5EYiCNKRB4rHCR9gcvRSqzzWuQqIdUxw5fYePv/rkbXjlO3yJ19uwCJc/DhLU+CZcJLblGomumMDz0URNwbGcZsyFJ3Yafw7oGbDJdnARfBBhD1Pdivtnh2bun+DEUXzZlelbvy+rWZuMGNgDaT02M82SGq6wfzH6mJAiYOe4w4UCPfplpLWFtxGiLlGpBjXUNHUMamYo3Ra1o9zR2MRV1/4TlmmXyZwMoTdfO/stSpKrkwHBNdtdq04oj/fD0cMFWYEIm/+VNKXNURyXUZJIMlxVRGLnbGt7QfMjEnuS5kf7mbIXD7JLE42g4Kr/SbQwO8sZZwIDAQAB"
+  }
 }
