@@ -16,7 +16,7 @@ header {
   position: relative;
   width:100%;
   height: 70px;
-  background-color: #516c8d69;
+  background-color: #516c8d90;
 }
 
 .logo {
@@ -41,7 +41,7 @@ footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background-color: #516c8d69;
+  background-color: #516c8d90;
   color: #fff;
   align-items: center;
 }

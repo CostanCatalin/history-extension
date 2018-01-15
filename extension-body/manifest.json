@@ -13,7 +13,7 @@
     "identity",
     "activeTab"
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com https://apis.google.com/js/api.js https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.en_GB.c9UmXspqLeA.O/m=gapi_iframes/rt=j/sv=1/d=1/ed=1/am=AQ/rs=AGLTcCOnBGiC_xXu7sRy4YPBtjRWsunPPA/cb=gapi.loaded_0; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com https://apis.google.com/js/api.js https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.en_GB.c9UmXspqLeA.O/m=gapi_iframes/rt=j/sv=1/d=1/ed=1/am=AQ/rs=AGLTcCOnBGiC_xXu7sRy4YPBtjRWsunPPA/cb=gapi.loaded_0; object-src 'self'",
   "oauth2": {
     "client_id": "276656653154-7gdasqvodjvknbnlr4gj674plkjgkl6n.apps.googleusercontent.com",
     "scopes": [
