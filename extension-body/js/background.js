@@ -13,6 +13,14 @@ function initApp() {
 
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+/*      firebase.auth().signOut().then(function() {
+        console.log("signed-out");
+      })
+      .catch(function(error) {
+        console.log("signed-out error");
+        console.log(error);
+      });*/
+
       var currentUrl;
 
       userId = firebase.auth().currentUser.uid;
@@ -88,11 +96,7 @@ function initApp() {
         });
 
     } else {
-      var email = "test@test.test";
-      var pass = "test1234";
-
-      // startAuth(true);
-      loginWithCredentials(email, pass);
+      startAuth(true);
     }
   });
 
@@ -106,14 +110,18 @@ function startAuth(interactive) {
   // Request an OAuth token from the Chrome Identity API.
   var provider = new firebase.auth.GoogleAuthProvider();
 
-  firebase.auth().signInWithRedirect(provider).then(function(result) {
+  firebase.auth().signInWithPopup(provider).then(function(result) {
+    if (result.credential) {
     // This gives you a Google Access Token. You can use it to access the Google API.
-    var token = result.credential.accessToken;
+      var token = result.credential.accessToken;
+      // ...
+    }
     // The signed-in user info.
     var user = result.user;
+    console.log(result);
     // ...
   }).catch(function(error) {
-    document.querySelector(".differences h2").innerText = error.message;
+    console.log(error);
     // Handle Errors here.
     var errorCode = error.code;
     var errorMessage = error.message;
@@ -123,13 +131,6 @@ function startAuth(interactive) {
     var credential = error.credential;
     // ...
   });
-}
-
-function loginWithCredentials(email, pass) {
-  firebase.auth().signInWithEmailAndPassword(email, pass)
-    .catch(function(error) {
-      document.querySelector(".differences h2").innerText = error.message;
-    });
 }
 
 /**
