@@ -16,12 +16,12 @@ header {
   position: relative;
   width:100%;
   height: 70px;
-  background-color: #aaaaaa;
+  background-color: #516c8d69;
 }
 
 .logo {
   position: relative;
-  top: 45px;
+  top: 10px;
   left: 12%;
   width: 214px;
   height: 50px;
@@ -29,13 +29,19 @@ header {
 
 main {
   width: 100%;
-  padding-top: 65px;
   text-align: center;
 }
 
+h1,
+h2 {
+  margin: 10px 0;
+}
+
 footer {
+  position: absolute;
+  bottom: 0;
   width: 100%;
-  background-color: #516c8d;
+  background-color: #516c8d69;
   color: #fff;
   align-items: center;
 }
@@ -46,15 +52,16 @@ footer a {
   display: block;
   text-decoration: none;
   text-align: center;
+  font-weight: bold;
   transition: 0.15s all;
 }
 
 footer a:hover {
-  background-color: #304163;
+  background-color: #516c8d;
 }
 
 footer a .footer-text {
-  color: white;
+  color: black;
   font-size: 24px;
   position: relative;
   top: 5px;
@@ -89,7 +96,7 @@ footer a .footer-text:before{
   border: 3px solid #fff;
   border-radius: 100px;
   color: #fff;
-  background-color: #6a8494;
+  background-color: #ab576c;
   box-shadow: 0 0 20px rgba(0, 0, 0, .2);
   white-space: nowrap;
   cursor: pointer;
@@ -109,6 +116,7 @@ footer a .footer-text:before{
   border: 3px solid #fff;
   border-radius: 100px;
   transition: background-color .2s;
+  background-color: #fff;
 }
 
 .container-1 input[type=checkbox],
@@ -121,11 +129,15 @@ label:hover, input:focus + label {
 }
 
 input:checked + label {
-  background-color: #ab576c;
+  background-color: #516c8d;
 }
 
 input:checked + label::before {
-  background-color: #fff;
+  background-color: #6a8494;
+}
+
+#hi-color {
+  cursor: pointer;
 }
 
 .container-3 label:hover {
@@ -133,7 +145,7 @@ input:checked + label::before {
 }
 
 .differences {
-  padding: 10px;
+  padding: 0 10px;
 }
 
 .differences h1 {

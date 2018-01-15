@@ -29,8 +29,9 @@ function initApp() {
       // If new user, add default colour
       usersRef.once('value', function(snapshot) {
         if (snapshot.val() == null) {
-          usersRef.child(userId).set({
-            highlight_color: "#fff385"
+          usersRef.set({
+            highlight_color: "#fff385",
+            show_number_in_icon: false
           });
         }
       });
@@ -54,7 +55,7 @@ function initApp() {
 
                   // retrieving formatted dom from active tab
                   chrome.tabs.executeScript(tabs[0].id, {
-                    code: '(' + DOMFormatter + ')();'
+                    code: '(' + DOMFormatter + ')();' + fullPath 
                   }, function(pageDOM) {
 
                     pageDOM = pageDOM[0];
@@ -70,7 +71,8 @@ function initApp() {
 
                           usersRef.child("/history/" + newKey).set({
                             url: currentUrl,
-                            dom: pageDOM
+                            dom: pageDOM,
+                            custom_colour: "not_set",
                           });
 
                           // Update the dom json
@@ -143,6 +145,7 @@ window.onload = function() {
 
 function DOMFormatter() {
   var dom = $("p:not(:has(>div))");
+
   var allElements = [];
   for (var i = 0; i < dom.length; i++) {
 
@@ -152,6 +155,7 @@ function DOMFormatter() {
     };
   }
 
+  console.log("sending document to extension");
   return JSON.stringify(allElements);
 }
 
