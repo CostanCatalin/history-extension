@@ -17,7 +17,9 @@ gulp.task('sass', function () {
 //js
 gulp.task('js', function () {
     gulp.src('assets/js/*.js')
-        .pipe(uglify())
+        .pipe(uglify().on('error', function(e){
+            console.log(e);
+         }))
         .pipe(concat('main.min.js'))
         .pipe(gulp.dest('assets/'));
 

@@ -7,7 +7,9 @@
     ">
     <link rel="icon" href="assets/img/favicon.png" type="image/png">
 
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="assets/main.min.js"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -25,45 +27,15 @@
         <div class="container">
         <h2>History</h2>
             <table class="table table-hover">
-                <tr>
-                    <th>No.</th>
-                    <th>URL</th>
-                    <th>Changes</th>
-                    <th>% Changed</th>
-                    <th>Date</th>
-                </tr>
             </table>
-            <ul class="pagination pagination-sm pull-right">
-              <li class="active"><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
-            </ul>
         </div> 
     </div>
 
-    <div class="excluded">
+    <div class="followed">
         <div class="container">
             <h2>Followed pages</h2>
-                <!-- <div class="row"> 
-                    <div class="col-xs-1">1</div>
-                    <div class="col-xs-8">
-                        https://velit.com/
-                    </div>
-                    
-                    <div class="col-xs-2 remove">
-                        <span class="glyphicon glyphicon-remove"></span> 
-                        <span class="hidden-xs">Remove</span>
-                    </div>
-                </div> -->
-            <ul class="pagination pagination-sm pull-right">
-              <li class="active"><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
-            </ul>
+                <table class="table"><tr></tr>
+                </table>
 
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addPageModal">
                 Add page
@@ -83,7 +55,7 @@
 
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="usr">url:</label>
+                            <label for="url">url:</label>
                             <input type="text" class="form-control" id="url">
                         </div>
                     </div>
@@ -97,7 +69,7 @@
         </div>
     </div>
 
-    <div class="highlight-color">
+    <div id="options">
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
@@ -106,15 +78,14 @@
                     <input id="hi-color" type="color" value="#fff385"/> 
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <h2> Download config file </h2>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Download</button>
+                    <a type="button" class="btn btn-primary download">Download</a>
                 </div>
             </div>
         </div>
     </div>
 
     <footer>&copy; 2017 Costan Catalin and Raluca Plugariu</footer>
-    <script src="assets/main.min.js"></script>
 </body>
 </html>

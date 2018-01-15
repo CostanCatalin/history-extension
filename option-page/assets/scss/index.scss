@@ -42,6 +42,15 @@ footer {
     font-size: 0.8em;
 }
 
+table {
+    word-break: break-all;
+
+    td, 
+    th {
+        padding: 10px 5px;
+    }
+}
+
 .history {
     margin-top: 25px;
 
@@ -86,15 +95,26 @@ footer {
     }
 }
 
-.excluded {
-    .row {
-        border-radius: 10px;
+.followed {
+    table { 
+        width: 100%;
+        border-collapse: separate;
+    }
 
-        div {
-            padding: 10px 0;
+    tr {
+        td {
             height: 35px;
+            min-width: 100px;
 
             &:first-child{
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+                text-align: center;
+            }
+
+            &:last-child{
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
                 text-align: center;
             }
         }
@@ -131,7 +151,7 @@ footer {
 @media screen and (max-width: 767px) {
 
     .history,
-    .excluded{
+    .followed{
         margin: 50px 15px;
 
         h2 {
