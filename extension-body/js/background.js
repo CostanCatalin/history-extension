@@ -174,14 +174,14 @@ function initApp() {
             });
         });
     } else {
-      firebase.auth().signInWithEmailAndPassword("test@test.test", "test1234").catch(function(error) {
+/*      firebase.auth().signInWithEmailAndPassword("test@test.test", "test1234").catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorCode + ": " + errorMessage);
         // ...
-      });
-      //startAuth(true);
+      });*/
+      startAuth(true);
     }
   });
 

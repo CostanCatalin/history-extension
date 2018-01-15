@@ -12,6 +12,10 @@ html, body{
   background-color: #e0e0eb;
 }
 
+body {
+  padding: 5px;
+}
+
 header {
   position: relative;
   width:100%;
@@ -37,10 +41,14 @@ h2 {
   margin: 10px 0;
 }
 
+h2 {
+  font-size: 20px;
+}
+
 footer {
   position: absolute;
   bottom: 0;
-  width: 100%;
+  width: 97%;
   background-color: #516c8d90;
   color: #fff;
   align-items: center;
