@@ -11,6 +11,7 @@ function initApp() {
 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+
             userId = firebase.auth().currentUser.uid;
             var usersRef = firebase.database().ref('/users/' + userId);
 
@@ -67,6 +68,7 @@ function initApp() {
             });
 
         } else {
+
             startAuth(true);
         }
     });
@@ -134,6 +136,21 @@ function downloadObjectAsJson(exportObj, exportName) {
     downloadAnchorNode.remove();
 }
 
+function updateConfiguration(result) {
+    if (Object.keys(result).length != 0) {
+        var userId = firebase.auth().currentUser.uid;
+        var userRef = firebase.database().ref('/users/');
+        var tmp = {};
+        tmp[userId] = result;
+        userRef.update(
+            tmp
+        );
+    }
+
+}
+
+
+
 document.addEventListener("DOMContentLoaded", function(event) {
     document.querySelector("#addPageModal .btn-success")
         .addEventListener('click', function(event) {
@@ -172,6 +189,26 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
             document.querySelector("#addPageModal #url").value = "";
         });
+    document.getElementById('import').addEventListener('click', function(event) {
+        var files = document.getElementById('selectFiles').files;
+        console.log(files);
+        if (files.length <= 0) {
+            return false;
+        }
+
+        var fr = new FileReader();
+
+        fr.onload = function(e) {
+            console.log(e);
+            var result = JSON.parse(e.target.result);
+            updateConfiguration(result);
+        }
+
+        fr.readAsText(files.item(0));
+
+    });
+
+
 });
 /**
  * Starts the sign-in process.
@@ -210,4 +247,15 @@ function startAuth(interactive) {
         var credential = error.credential;
         // ...
     });
+}
+
+
+function logout() {
+    firebase.auth().signOut().then(function() {
+            console.log("signed-out");
+        })
+        .catch(function(error) {
+            console.log("signed-out error");
+            console.log(error);
+        });
 }
