@@ -6,6 +6,8 @@ var config = {
 };
 
 firebase.initializeApp(config);
+var oldDOM = null;
+var currentColor = null;
 
 function initApp() {
 
@@ -19,13 +21,15 @@ function initApp() {
       usersRef.once('value', function(snapshot) {
         // If new user, add default options
         if (snapshot.val() == null) {
+          currentColor = "#fff385";
           usersRef.set({
             highlight_color: "#fff385",
             show_number_in_icon: false
           });
           // Else send data to extension
         } else {
-          displayOptions(snapshot.val().show_number_in_icon, snapshot.val().highlight_color);
+          currentColor = snapshot.val().highlight_color;
+          displayOptions(snapshot.val().show_number_in_icon, snapshot.val().highlight_color, snapshot.val().is_enabled);
         }
       });
 
@@ -68,7 +72,8 @@ function initApp() {
                         if (data.child("url").val() == currentUrl) {
 
                           var updates = {};
-                          updates["/history/" + data.key + "/custom_colour"] = value;
+                          updates["/history/" + data.key + "/custom_colour"] = value; //TODO
+                          currentColor = value;
                           usersRef.update(updates);
                         }
                       });
@@ -77,7 +82,7 @@ function initApp() {
                     }
                   });
 
-                // update db for is enabled
+                // update db for is_enabled
               } else {
 
                 // insert
@@ -97,7 +102,6 @@ function initApp() {
                   usersRef.child("/followed_links/").orderByChild('url')
                     .equalTo(currentUrl).once('value', function(snapshot) {
 
-                      // Add dom for this URL if not existing
                       if (snapshot.exists()) {
                         var key = Object.keys(snapshot.val())[0];
 
@@ -116,71 +120,96 @@ function initApp() {
               if (snapshot.exists()) {
                 displayEnabled(true);
 
-                // sending jquery to content script
-                chrome.tabs.executeScript(null, {
-                  file: "js/jquery-3.2.1.min.js"
-                }, function() {
+                usersRef.child("/history/").orderByChild('url')
+                  .equalTo(currentUrl).once('value', function(snapshot) {
+                    //var oldDOM = null;
+                    if (snapshot.exists()) {
+                      oldDOM = Object.entries(snapshot.val())[0][1].dom;
+                    }
 
-                  // retrieving formatted dom from active tab
-                  chrome.tabs.executeScript(tabs[0].id, {
-                    code: '(' + DOMFormatter + ')();' + fullPath
-                  }, function(pageDOM) {
+                    // sending jquery to content script
+                    chrome.tabs.executeScript(null, {
+                      file: "js/jquery-3.2.1.min.js"
+                    }, function() {
+                      // retrieving formatted dom from active tab
+                      chrome.tabs.executeScript(tabs[0].id, {
+                        code: 'var currentColor = "' + currentColor + '"; var oldDOM = ' + JSON.stringify(oldDOM) + '; ' + fullPath + '; ' + setColorToChanges + '; ' + setColorToDefault + '; (' + DOMFormatter + ')();'
+                      }, function(results) {
+                        results = JSON.parse(results);
 
-                    pageDOM = pageDOM[0];
+                        var pageDOM = JSON.stringify(results.dom);
+                        var changes = results.changes;
+                        var percentage = results.percentage;
 
-                    // First visit to this page?              
-                    usersRef.child("/history/").orderByChild('url')
-                      .equalTo(currentUrl).once('value', function(snapshot) {
+                        document.querySelector(".differences h1").innerText = changes;
 
-                        // Add dom for this URL if not existing
-                        if (!snapshot.exists()) {
+                        chrome.browserAction.setBadgeText({
+                          tabId: tabs[0].id,
+                          text: String(changes)
+                        });
+                        chrome.browserAction.setBadgeBackgroundColor({
+                          color: [95, 92, 100, 255]
+                        });
 
-                          var newKey = usersRef.child("/history/").push().key;
+                        // First visit to this page?              
+                        usersRef.child("/history/").orderByChild('url')
+                          .equalTo(currentUrl).once('value', function(snapshot) {
 
-                          usersRef.child("/history/" + newKey).set({
-                            custom_colour: "not_set",
-                            changes: 0,
-                            changes_percentage: 0,
-                            date: new Date().toLocaleString(),
-                            dom: pageDOM,
-                            url: currentUrl
-                          });
+                            // Add dom for this URL if not existing
+                            if (!snapshot.exists()) {
 
-                          // Update the dom json
-                        } else {
-                          var custom_colour = Object.entries(snapshot.val())[0][1].custom_colour;
-                          if (custom_colour != "not_set") {
-                            displayColour(custom_colour);
-                          } else {
-                            console.log("colour not set");
-                          }
-                          snapshot.forEach(function(data) {
-                            if (data.child("url").val() == currentUrl) {
-                              //TODO changes
-                              var updates = {};
-                              updates["/history/" + data.key + "/dom"] = pageDOM;
-                              updates["/history/" + data.key + "/date"] = new Date().toLocaleString();
-                              usersRef.update(updates);
+                              var newKey = usersRef.child("/history/").push().key;
+
+                              usersRef.child("/history/" + newKey).set({
+                                custom_colour: "not_set",
+                                changes: 0,
+                                changes_percentage: 0,
+                                date: new Date().toLocaleString(),
+                                dom: pageDOM,
+                                url: currentUrl
+                              });
+
+                              // Update the dom json
+                            } else {
+                              var custom_colour = Object.entries(snapshot.val())[0][1].custom_colour;
+                              if (custom_colour != "not_set") {
+                                displayColour(custom_colour);
+                                currentColor = custom_colour;
+
+                                //resend color
+                                chrome.tabs.executeScript(tabs[0].id, {
+                                  code: 'var currentColor = "' + currentColor + '"; (' + setColorToChanges + ')();'
+                                }, function() {});
+
+                              } else {
+                                console.log("colour not set");
+                              }
+
+                              snapshot.forEach(function(data) {
+                                if (data.child("url").val() == currentUrl) {
+
+                                  var updates = {};
+                                  updates["/history/" + data.key + "/dom"] = pageDOM;
+                                  updates["/history/" + data.key + "/changes"] = changes;
+                                  updates["/history/" + data.key + "/changes_percentage"] = percentage;
+                                  updates["/history/" + data.key + "/date"] = new Date().toLocaleString();
+                                  usersRef.update(updates);
+                                }
+                              });
                             }
-                          });
-                        }
 
+                          });
                       });
+                    });
+
                   });
-                });
+
               } else {
                 console.log("The url is not being followed");
               }
             });
         });
     } else {
-/*      firebase.auth().signInWithEmailAndPassword("test@test.test", "test1234").catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorCode + ": " + errorMessage);
-        // ...
-      });*/
       startAuth(true);
     }
   });
@@ -196,25 +225,10 @@ function startAuth(interactive) {
   var provider = new firebase.auth.GoogleAuthProvider();
 
   firebase.auth().signInWithPopup(provider).then(function(result) {
-    if (result.credential) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = result.credential.accessToken;
-      // ...
-    }
-    // The signed-in user info.
-    var user = result.user;
-    console.log(result);
-    // ...
+
   }).catch(function(error) {
     console.log(error);
     // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    // The email of the user's account used.
-    var email = error.email;
-    // The firebase.auth.AuthCredential type that was used.
-    var credential = error.credential;
-    // ...
   });
 }
 
@@ -227,10 +241,11 @@ window.onload = function() {
 };
 
 
-function displayOptions(showNumber, color) {
+function displayOptions(showNumber, color, is_enabled) {
   if (showNumber) {
     document.getElementById("icon-number").setAttribute("checked", true);
   }
+
   displayColour(color);
 }
 
@@ -255,21 +270,122 @@ function logout() {
     });
 }
 
+
+
 /*Functions sent to content script*/
 function DOMFormatter() {
-  var dom = $("p:not(:has(>div))");
 
-  var allElements = [];
-  for (var i = 0; i < dom.length; i++) {
+  var appClassName = "updater-new-data-3U8ZPIKQQ6J8JZ6C7P4SJ470GR8OKKHB2R0DKUC334MV77HSNQJHPPHXHD3E";
+  var hoverClass = "updater-old-data-3U8ZPIKQQ6J8JZ6C7P4SJ470GR8OKKHB2R0DKUC334MV77HSNQJHPPHXHD3E";
 
-    allElements[i] = {
-      "selector": fullPath(dom[i]),
-      "value": dom[i].innerText ? dom[i].innerText : "undefined"
-    };
+  var myOldDOM = null;
+  if (oldDOM != undefined) {
+    myOldDOM = JSON.parse(oldDOM)
+  }
+  myOldDOM = JSON.parse(myOldDOM);
+
+  var myNewDOM = [];
+  var contentTags = [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "pre",
+    "button",
+    "img",
+    "label",
+    "td",
+    "li"
+  ];
+
+  for (var j = 0; j < contentTags.length; j++) {
+    var elements = document.getElementsByTagName(contentTags[j]);
+
+    for (var i = 0; i < elements.length; i++) {
+
+      myNewDOM[i] = {
+        "selector": fullPath(elements[i]),
+        "value": elements[i].innerHTML ? elements[i].innerHTML : "undefined"
+      };
+    }
   }
 
+  if (myOldDOM != null) {
+
+    //check dom stuff
+    var numberDifference = Math.abs(myOldDOM.length - myNewDOM.length);
+    var contentDifferences = 0;
+
+    for (var i = 0; i < myNewDOM.length; i++) {
+      for (var j = 0; j < myOldDOM.length; j++) {
+        if (myNewDOM[i].selector == myOldDOM[j].selector) {
+          if (myNewDOM[i].value != myOldDOM[j].value) {
+            contentDifferences++;
+
+            var spacer = " ";
+            if (document.querySelector(myNewDOM[i].selector).className == "") {
+              spacer = "";
+            }
+            document.querySelector(myNewDOM[i].selector).className += spacer + appClassName;
+            document.querySelector(myNewDOM[i].selector).innerHTML += "<div class=\"" + hoverClass + "\"><h2>Previous Value</h2>" + myOldDOM[j].value + "</div>";
+          }
+        }
+      }
+    }
+  }
+
+  if (contentDifferences > 0) {
+    setColorToChanges();
+
+    var css = 
+    + ' .' + appClassName + ' {cursor: pointer;}'
+    + ' .' + appClassName + ' .' + hoverClass + '{background-color: white; display: none; position: fixed; z-index:9001; top: 0; left: 0;box-shadow: 0 8px 17px 0 rgba(0,0,0,.2)}' 
+    + ' .' + appClassName + ':hover .' + hoverClass + '{ display: block; }'
+    + ' .' + hoverClass + " h2{padding: 10px 20px; background-color: #314263; color: white; font-weight: bold;}"
+
+    var style = document.createElement('style');
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+
+    document.getElementsByTagName('head')[0].appendChild(style);
+  } else {
+    setColorToDefault();
+  }
+
+  var returnObj = {
+    "changes": numberDifference + contentDifferences,
+    "percentage": (((numberDifference + contentDifferences) / myNewDOM.length) * 100).toFixed(2),
+    "dom": JSON.stringify(myNewDOM)
+  };
+
   console.log("sending document to extension");
-  return JSON.stringify(allElements);
+  return JSON.stringify(returnObj);
+}
+
+function setColorToChanges() {
+  var appClassName = "updater-new-data-3U8ZPIKQQ6J8JZ6C7P4SJ470GR8OKKHB2R0DKUC334MV77HSNQJHPPHXHD3E";
+
+  elements = document.getElementsByClassName(appClassName);
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].style.backgroundColor = currentColor;
+  }
+}
+
+function setColorToDefault() {
+  var appClassName = "updater-new-data-3U8ZPIKQQ6J8JZ6C7P4SJ470GR8OKKHB2R0DKUC334MV77HSNQJHPPHXHD3E";
+
+  elements = document.getElementsByClassName(appClassName);
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].style.backgroundColor = "";
+    elements[i].classList.remove(appClassName);
+  }
 }
 
 function fullPath(el) {
@@ -279,8 +395,11 @@ function fullPath(el) {
       names.unshift('#' + el.id);
       break;
     } else {
-      if (el == el.ownerDocument.documentElement) names.unshift(el.tagName);
-      else {
+
+      if (el == el.ownerDocument.documentElement) {
+        names.unshift(el.tagName);
+      } else {
+
         for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++);
         names.unshift(el.tagName + ":nth-child(" + c + ")");
       }
