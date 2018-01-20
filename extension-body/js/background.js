@@ -330,7 +330,7 @@ function DOMFormatter() {
               spacer = "";
             }
             document.querySelector(myNewDOM[i].selector).className += spacer + appClassName;
-            document.querySelector(myNewDOM[i].selector).innerHTML += "<div class=\"" + hoverClass + "\"><h2>Previous Value</h2>" + myOldDOM[j].value + "</div>";
+            document.querySelector(myNewDOM[i].selector).innerHTML += "<div class=\"" + hoverClass + "\"><h2>Previous Value</h2> <div class=\"data\">" + myOldDOM[j].value + "</div></div>";
           }
         }
       }
@@ -340,11 +340,11 @@ function DOMFormatter() {
   if (contentDifferences > 0) {
     setColorToChanges();
 
-    var css = 
-    + ' .' + appClassName + ' {cursor: pointer;}'
-    + ' .' + appClassName + ' .' + hoverClass + '{background-color: white; display: none; position: fixed; z-index:9001; top: 0; left: 0;box-shadow: 0 8px 17px 0 rgba(0,0,0,.2)}' 
+    var css = '.' + appClassName + ' {cursor: pointer;}'
+    + ' .' + appClassName + ' .' + hoverClass + '{background-color: white; display: none; position: fixed; z-index:9001; top: 10px; left: 10px; box-shadow: 0 8px 17px 0 rgba(0,0,0,.2)}' 
     + ' .' + appClassName + ':hover .' + hoverClass + '{ display: block; }'
-    + ' .' + hoverClass + " h2{padding: 10px 20px; background-color: #314263; color: white; font-weight: bold;}"
+    + ' .' + hoverClass + " h2{ padding: 10px 20px; background-color: #516c8d; color: white; font-weight: bold;}"
+    + ' .' + hoverClass + " .data{ padding: 0 10px 15px;}";
 
     var style = document.createElement('style');
 
