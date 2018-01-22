@@ -126,6 +126,7 @@ table {
         .remove {
             text-align: center;
             cursor: pointer;
+            width: 110px;
             transition: 0.15s background-color; 
 
             .glyphicon-remove {
