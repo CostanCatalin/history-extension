@@ -72,7 +72,7 @@ function initApp() {
                         if (data.child("url").val() == currentUrl) {
 
                           var updates = {};
-                          updates["/history/" + data.key + "/custom_colour"] = value; //TODO
+                          updates["/history/" + data.key + "/custom_colour"] = value;
                           currentColor = value;
                           usersRef.update(updates);
                         }
@@ -122,86 +122,81 @@ function initApp() {
 
                 usersRef.child("/history/").orderByChild('url')
                   .equalTo(currentUrl).once('value', function(snapshot) {
-                    //var oldDOM = null;
+
                     if (snapshot.exists()) {
                       oldDOM = Object.entries(snapshot.val())[0][1].dom;
                     }
 
-                    // sending jquery to content script
-                    chrome.tabs.executeScript(null, {
-                      file: "js/jquery-3.2.1.min.js"
-                    }, function() {
-                      // retrieving formatted dom from active tab
-                      chrome.tabs.executeScript(tabs[0].id, {
-                        code: 'var currentColor = "' + currentColor + '"; var oldDOM = ' + JSON.stringify(oldDOM) + '; ' + fullPath + '; ' + setColorToChanges + '; ' + setColorToDefault + '; (' + DOMFormatter + ')();'
-                      }, function(results) {
-                        results = JSON.parse(results);
+                    // retrieving formatted dom from active tab
+                    chrome.tabs.executeScript(tabs[0].id, {
+                      code: 'var currentColor = "' + currentColor + '"; var oldDOM = ' + JSON.stringify(oldDOM) + '; ' + fullPath + '; ' + setColorToChanges + '; ' + setColorToDefault + '; (' + DOMFormatter + ')();'
+                    }, function(results) {
+                      console.log("took DOM");
+                      results = JSON.parse(results);
 
-                        var pageDOM = JSON.stringify(results.dom);
-                        var changes = results.changes;
-                        var percentage = results.percentage;
+                      var pageDOM = JSON.stringify(results.dom);
+                      var changes = results.changes;
+                      var percentage = results.percentage;
 
-                        document.querySelector(".differences h1").innerText = changes;
+                      document.querySelector(".differences h1").innerText = changes;
 
-                        chrome.browserAction.setBadgeText({
-                          tabId: tabs[0].id,
-                          text: String(changes)
-                        });
-                        chrome.browserAction.setBadgeBackgroundColor({
-                          color: [95, 92, 100, 255]
-                        });
+                      chrome.browserAction.setBadgeText({
+                        tabId: tabs[0].id,
+                        text: String(changes)
+                      });
+                      chrome.browserAction.setBadgeBackgroundColor({
+                        color: [95, 92, 100, 255]
+                      });
 
-                        // First visit to this page?              
-                        usersRef.child("/history/").orderByChild('url')
-                          .equalTo(currentUrl).once('value', function(snapshot) {
+                      // First visit to this page?              
+                      usersRef.child("/history/").orderByChild('url')
+                        .equalTo(currentUrl).once('value', function(snapshot) {
 
-                            // Add dom for this URL if not existing
-                            if (!snapshot.exists()) {
+                          // Add dom for this URL if not existing
+                          if (!snapshot.exists()) {
 
-                              var newKey = usersRef.child("/history/").push().key;
+                            var newKey = usersRef.child("/history/").push().key;
 
-                              usersRef.child("/history/" + newKey).set({
-                                custom_colour: "not_set",
-                                changes: 0,
-                                changes_percentage: 0,
-                                date: new Date().toLocaleString(),
-                                dom: pageDOM,
-                                url: currentUrl
-                              });
+                            usersRef.child("/history/" + newKey).set({
+                              custom_colour: "not_set",
+                              changes: 0,
+                              changes_percentage: 0,
+                              date: new Date().toLocaleString(),
+                              dom: pageDOM,
+                              url: currentUrl
+                            });
 
-                              // Update the dom json
+                            // Update the dom json
+                          } else {
+                            var custom_colour = Object.entries(snapshot.val())[0][1].custom_colour;
+                            if (custom_colour != "not_set") {
+                              displayColour(custom_colour);
+                              currentColor = custom_colour;
+
+                              //resend color
+                              chrome.tabs.executeScript(tabs[0].id, {
+                                code: 'var currentColor = "' + currentColor + '"; (' + setColorToChanges + ')();'
+                              }, function() {});
+
                             } else {
-                              var custom_colour = Object.entries(snapshot.val())[0][1].custom_colour;
-                              if (custom_colour != "not_set") {
-                                displayColour(custom_colour);
-                                currentColor = custom_colour;
-
-                                //resend color
-                                chrome.tabs.executeScript(tabs[0].id, {
-                                  code: 'var currentColor = "' + currentColor + '"; (' + setColorToChanges + ')();'
-                                }, function() {});
-
-                              } else {
-                                console.log("colour not set");
-                              }
-
-                              snapshot.forEach(function(data) {
-                                if (data.child("url").val() == currentUrl) {
-
-                                  var updates = {};
-                                  updates["/history/" + data.key + "/dom"] = pageDOM;
-                                  updates["/history/" + data.key + "/changes"] = changes;
-                                  updates["/history/" + data.key + "/changes_percentage"] = percentage;
-                                  updates["/history/" + data.key + "/date"] = new Date().toLocaleString();
-                                  usersRef.update(updates);
-                                }
-                              });
+                              console.log("colour not set");
                             }
 
-                          });
-                      });
-                    });
+                            snapshot.forEach(function(data) {
+                              if (data.child("url").val() == currentUrl) {
 
+                                var updates = {};
+                                updates["/history/" + data.key + "/dom"] = pageDOM;
+                                updates["/history/" + data.key + "/changes"] = changes;
+                                updates["/history/" + data.key + "/changes_percentage"] = percentage;
+                                updates["/history/" + data.key + "/date"] = new Date().toLocaleString();
+                                usersRef.update(updates);
+                              }
+                            });
+                          }
+
+                        });
+                    });
                   });
 
               } else {
@@ -240,11 +235,12 @@ window.onload = function() {
   initApp();
 };
 
-
 function displayOptions(showNumber, color, is_enabled) {
   if (showNumber) {
     document.getElementById("icon-number").setAttribute("checked", true);
   }
+
+  displayEnabled(is_enabled);
 
   displayColour(color);
 }
@@ -298,13 +294,23 @@ function DOMFormatter() {
     "img",
     "label",
     "td",
-    "li"
+    "li",
+    "input"
   ];
 
   for (var j = 0; j < contentTags.length; j++) {
     var elements = document.getElementsByTagName(contentTags[j]);
 
     for (var i = 0; i < elements.length; i++) {
+      var alreadyProcessed = elements[i].querySelector("." + hoverClass);
+
+      if (alreadyProcessed != null) {
+        try {
+          elements[i].removeChild(alreadyProcessed);
+        } catch (e) {
+          console.log("Browser quirks mode -- remove");
+        }
+      }
 
       myNewDOM[i] = {
         "selector": fullPath(elements[i]),
@@ -340,11 +346,11 @@ function DOMFormatter() {
   if (contentDifferences > 0) {
     setColorToChanges();
 
-    var css = '.' + appClassName + ' {cursor: pointer;}'
-    + ' .' + appClassName + ' .' + hoverClass + '{background-color: white; display: none; position: fixed; z-index:9001; top: 10px; left: 10px; box-shadow: 0 8px 17px 0 rgba(0,0,0,.2)}' 
-    + ' .' + appClassName + ':hover .' + hoverClass + '{ display: block; }'
-    + ' .' + hoverClass + " h2{ padding: 10px 20px; background-color: #516c8d; color: white; font-weight: bold;}"
-    + ' .' + hoverClass + " .data{ padding: 0 10px 15px;}";
+    var css = '.' + appClassName + ' {cursor: pointer;}' +
+      ' .' + appClassName + ' .' + hoverClass + '{background-color: white; display: none; position: fixed; z-index:9001; top: 10px; left: 10px; box-shadow: 0 8px 17px 0 rgba(0,0,0,.2)}' +
+      ' .' + appClassName + ':hover .' + hoverClass + '{ display: block; }' +
+      ' .' + hoverClass + " h2{ padding: 10px 20px; background-color: #516c8d; color: white; font-weight: bold;}" +
+      ' .' + hoverClass + " .data{ padding: 0 10px 15px;}";
 
     var style = document.createElement('style');
 
@@ -361,11 +367,10 @@ function DOMFormatter() {
 
   var returnObj = {
     "changes": numberDifference + contentDifferences,
-    "percentage": (((numberDifference + contentDifferences) / myNewDOM.length) * 100).toFixed(2),
+    "percentage": (((numberDifference + contentDifferences) / (myNewDOM.length + contentDifferences)) * 100).toFixed(2),
     "dom": JSON.stringify(myNewDOM)
   };
 
-  console.log("sending document to extension");
   return JSON.stringify(returnObj);
 }
 
@@ -374,7 +379,7 @@ function setColorToChanges() {
 
   elements = document.getElementsByClassName(appClassName);
   for (var i = 0; i < elements.length; i++) {
-    elements[i].style.backgroundColor = currentColor;
+    elements[i].style.backgroundColor = currentColor + " !important";
   }
 }
 
