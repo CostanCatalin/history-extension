@@ -1,5 +1,9 @@
 # history-extension
-A chrome extension that shows you the differences on a website between the current visit and the previous one
+A chrome extension that shows you the differences on a website page between the current visit and the previous one.
+
+It comes along with an options page that also displays data about the changes history.
+
+It's been built with the help of Firebase, which has been used for authentication through Google and data persistance.
 
 
 ### Prerequisites
@@ -11,7 +15,9 @@ npm install -g gulp
 ```
 
 ### Installing
-Gulp has been used to compile and minify scss. Inside **option-page** folder you'll have to run
+Gulp has been used to compile and minify scss. 
+
+Inside **option-page** folder you'll have to run
 ```
 npm i
 ```
@@ -25,6 +31,7 @@ will compile the files and start watching for scss and js changes
 
 ## Built With
 
+* [Firebase](https://firebase.google.com/) -  Web application development platform
 * [Bootstrap](https://getbootstrap.com/docs/3.3/) -  Front-end framework
 * [jQuery](https://jquery.com/) - JavaScript library
 * [Gulp](https://gulpjs.com/) -  Toolkit for automation
