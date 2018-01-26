@@ -135,7 +135,7 @@ function initApp() {
                       results = JSON.parse(results);
 
                       var pageDOM = JSON.stringify(results.dom);
-                      var changes = results.changes;
+                      var changes = results.changes ? results.changes : 0;
                       var percentage = results.percentage;
 
                       document.querySelector(".differences h1").innerText = changes;
@@ -318,13 +318,15 @@ function DOMFormatter() {
       };
     }
   }
+  
+  var numberDifference = 0;
+  var contentDifferences = 0;
 
   if (myOldDOM != null) {
 
     //check dom stuff
-    var numberDifference = Math.abs(myOldDOM.length - myNewDOM.length);
-    var contentDifferences = 0;
-
+    numberDifference = Math.abs(myOldDOM.length - myNewDOM.length);
+    
     for (var i = 0; i < myNewDOM.length; i++) {
       for (var j = 0; j < myOldDOM.length; j++) {
         if (myNewDOM[i].selector == myOldDOM[j].selector) {
@@ -379,7 +381,7 @@ function setColorToChanges() {
 
   elements = document.getElementsByClassName(appClassName);
   for (var i = 0; i < elements.length; i++) {
-    elements[i].style.backgroundColor = currentColor + " !important";
+    elements[i].style.backgroundColor = currentColor;
   }
 }
 
