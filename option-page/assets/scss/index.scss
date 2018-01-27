@@ -51,6 +51,24 @@ table {
     }
 }
 
+.loading {
+    height: 150px;
+    position: relative;
+    background: white url('img/loader.gif') no-repeat center -50px;
+    background-size: 250px;
+
+    &:before {
+        content: "Loading data...";
+        display: block;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 20px;
+    }
+}
+
 .history {
     margin-top: 25px;
 

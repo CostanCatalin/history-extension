@@ -80,6 +80,7 @@ function chosenColor(color) {
 
 function printLinks(links) {
     $('.followed table').empty();
+    $('.followed .loading').remove();
 
     for (var i = 0; i < links.length; i++) {
         element = links[i];
@@ -96,6 +97,8 @@ function printLinks(links) {
 function printHistory(elements) {
     var $table = $('.history table');
     $table.empty();
+    $('.history .loading').remove();
+
     $('<tr><th>No.</th><th>URL</th><th>Changes</th><th>% Changed</th><th>Date</th></tr>').appendTo($table);
     for (var i = 0; i < elements.length; i++) {
         var current = elements[i];

@@ -21,7 +21,9 @@ function initApp() {
       usersRef.once('value', function(snapshot) {
         // If new user, add default options
         if (snapshot.val() == null) {
+
           currentColor = "#fff385";
+
           usersRef.set({
             highlight_color: "#fff385",
             show_number_in_icon: false
@@ -175,7 +177,7 @@ function initApp() {
 
                               //resend color
                               chrome.tabs.executeScript(tabs[0].id, {
-                                code: 'var currentColor = "' + currentColor + '"; (' + setColorToChanges + ')();'
+                                code: ' currentColor = "' + currentColor + '"; (' + setColorToChanges + ')();'
                               }, function() {});
 
                             } else {
@@ -289,6 +291,8 @@ function DOMFormatter() {
     "h5",
     "h6",
     "p",
+    "b",
+    "i",
     "pre",
     "button",
     "img",
