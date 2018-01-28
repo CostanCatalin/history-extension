@@ -7,210 +7,228 @@ var config = {
 
 firebase.initializeApp(config);
 var oldDOM = null;
-var currentColor = null;
+var currentColor = "#fff385";
 
 function initApp() {
 
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-      var currentUrl;
-
       userId = firebase.auth().currentUser.uid;
       var usersRef = firebase.database().ref('/users/' + userId);
 
+      // User management
       usersRef.once('value', function(snapshot) {
         // If new user, add default options
         if (snapshot.val() == null) {
 
-          currentColor = "#fff385";
-
           usersRef.set({
-            highlight_color: "#fff385",
+            highlight_color: currentColor,
             show_number_in_icon: false
           });
+
+          mainFunctionalityWrapper(usersRef);
           // Else send data to extension
         } else {
           currentColor = snapshot.val().highlight_color;
+
+          mainFunctionalityWrapper(usersRef);
+
           displayOptions(snapshot.val().show_number_in_icon, snapshot.val().highlight_color, snapshot.val().is_enabled);
         }
       });
-
-      chrome.tabs.query({
-          'active': true,
-          'windowId': chrome.windows.WINDOW_ID_CURRENT
-        },
-        function(tabs) {
-          currentUrl = tabs[0].url;
-
-          // on-change for extension input
-          var inputFields = document.querySelectorAll("input");
-          var mapping = {
-            "icon-number": "show_number_in_icon",
-            "hi-color": "highlight_color",
-            "is-enabled": "followed_links"
-          };
-
-          for (var i = 0; i < inputFields.length; i++) {
-            inputFields[i].addEventListener('change', function(event) {
-              var selector = event.target.id;
-              var value = event.target.value;
-
-              if (event.target.value == "on") {
-                value = event.target.checked;
-              }
-
-              // update "see icon number"
-              if (selector == "icon-number") {
-                var updates = {};
-                updates[mapping[selector]] = value;
-                usersRef.update(updates);
-
-                // update color for page
-              } else if (selector == "hi-color") {
-                usersRef.child("/history/").orderByChild('url')
-                  .equalTo(currentUrl).once('value', function(snapshot) {
-                    if (snapshot.exists()) {
-                      snapshot.forEach(function(data) {
-                        if (data.child("url").val() == currentUrl) {
-
-                          var updates = {};
-                          updates["/history/" + data.key + "/custom_colour"] = value;
-                          currentColor = value;
-                          usersRef.update(updates);
-                        }
-                      });
-                    } else {
-                      console.log("Tried to change color for current page and failed");
-                    }
-                  });
-
-                // update db for is_enabled
-              } else {
-
-                // insert
-                if (value) {
-                  console.log("Adding to followed");
-
-                  var newKey = usersRef.child("/followed_links/").push().key;
-
-                  usersRef.child("/followed_links/" + newKey).set({
-                    url: currentUrl
-                  });
-
-                  // delete
-                } else {
-                  console.log("deleting current page");
-
-                  usersRef.child("/followed_links/").orderByChild('url')
-                    .equalTo(currentUrl).once('value', function(snapshot) {
-
-                      if (snapshot.exists()) {
-                        var key = Object.keys(snapshot.val())[0];
-
-                        usersRef.child("/followed_links/").child(key).child("url").set(null);
-                      }
-                    });
-                }
-              }
-
-            });
-          }
-
-          // check if url in "followed" links
-          usersRef.child("/followed_links/").orderByChild('url')
-            .equalTo(currentUrl).once('value', function(snapshot) {
-              if (snapshot.exists()) {
-                displayEnabled(true);
-
-                usersRef.child("/history/").orderByChild('url')
-                  .equalTo(currentUrl).once('value', function(snapshot) {
-
-                    if (snapshot.exists()) {
-                      oldDOM = Object.entries(snapshot.val())[0][1].dom;
-                    }
-
-                    // retrieving formatted dom from active tab
-                    chrome.tabs.executeScript(tabs[0].id, {
-                      code: 'var currentColor = "' + currentColor + '"; var oldDOM = ' + JSON.stringify(oldDOM) + '; ' + fullPath + '; ' + setColorToChanges + '; ' + setColorToDefault + '; (' + DOMFormatter + ')();'
-                    }, function(results) {
-                      console.log("took DOM");
-                      results = JSON.parse(results);
-
-                      var pageDOM = JSON.stringify(results.dom);
-                      var changes = results.changes ? results.changes : 0;
-                      var percentage = results.percentage;
-
-                      document.querySelector(".differences h1").innerText = changes;
-
-                      chrome.browserAction.setBadgeText({
-                        tabId: tabs[0].id,
-                        text: String(changes)
-                      });
-                      chrome.browserAction.setBadgeBackgroundColor({
-                        color: [95, 92, 100, 255]
-                      });
-
-                      // First visit to this page?              
-                      usersRef.child("/history/").orderByChild('url')
-                        .equalTo(currentUrl).once('value', function(snapshot) {
-
-                          // Add dom for this URL if not existing
-                          if (!snapshot.exists()) {
-
-                            var newKey = usersRef.child("/history/").push().key;
-
-                            usersRef.child("/history/" + newKey).set({
-                              custom_colour: "not_set",
-                              changes: 0,
-                              changes_percentage: 0,
-                              date: new Date().toLocaleString(),
-                              dom: pageDOM,
-                              url: currentUrl
-                            });
-
-                            // Update the dom json
-                          } else {
-                            var custom_colour = Object.entries(snapshot.val())[0][1].custom_colour;
-                            if (custom_colour != "not_set") {
-                              displayColour(custom_colour);
-                              currentColor = custom_colour;
-
-                              //resend color
-                              chrome.tabs.executeScript(tabs[0].id, {
-                                code: ' currentColor = "' + currentColor + '"; (' + setColorToChanges + ')();'
-                              }, function() {});
-
-                            } else {
-                              console.log("colour not set");
-                            }
-
-                            snapshot.forEach(function(data) {
-                              if (data.child("url").val() == currentUrl) {
-
-                                var updates = {};
-                                updates["/history/" + data.key + "/dom"] = pageDOM;
-                                updates["/history/" + data.key + "/changes"] = changes;
-                                updates["/history/" + data.key + "/changes_percentage"] = percentage;
-                                updates["/history/" + data.key + "/date"] = new Date().toLocaleString();
-                                usersRef.update(updates);
-                              }
-                            });
-                          }
-
-                        });
-                    });
-                  });
-
-              } else {
-                console.log("The url is not being followed");
-              }
-            });
-        });
     } else {
       startAuth(true);
     }
   });
 
+}
+
+function mainFunctionalityWrapper(usersRef) {
+  var domSent = false;
+  var currentUrl;
+
+
+  chrome.tabs.query({
+      'active': true,
+      'windowId': chrome.windows.WINDOW_ID_CURRENT
+    },
+    function(tabs) {
+      currentUrl = tabs[0].url;
+      
+      mainFunctionality(currentUrl, tabs[0].id, currentColor);
+      // on-change for extension input
+      var inputFields = document.querySelectorAll("input");
+      var mapping = {
+        "icon-number": "show_number_in_icon",
+        "hi-color": "highlight_color",
+        "is-enabled": "followed_links"
+      };
+
+      for (var i = 0; i < inputFields.length; i++) {
+        inputFields[i].addEventListener('change', function(event) {
+          var selector = event.target.id;
+          var value = event.target.value;
+
+          if (event.target.value == "on") {
+            value = event.target.checked;
+          }
+
+          // update "see icon number"
+          if (selector == "icon-number") {
+            var updates = {};
+            updates[mapping[selector]] = value;
+            usersRef.update(updates);
+
+            // update color for page
+          } else if (selector == "hi-color") {
+            usersRef.child("/history/").orderByChild('url')
+              .equalTo(currentUrl).once('value', function(snapshot) {
+                if (snapshot.exists()) {
+                  snapshot.forEach(function(data) {
+                    if (data.child("url").val() == currentUrl) {
+
+                      var updates = {};
+                      updates["/history/" + data.key + "/custom_colour"] = value;
+                      currentColor = value;
+                      usersRef.update(updates);
+                    }
+                  });
+                } else {
+                  console.log("Tried to change color for current page and failed");
+                }
+              });
+
+            // update db for is_enabled
+          } else {
+
+            // insert
+            if (value) {
+              console.log("Adding to followed");
+
+              var newKey = usersRef.child("/followed_links/").push().key;
+
+              usersRef.child("/followed_links/" + newKey).set({
+                url: currentUrl
+              }, function() {
+
+                console.log("reached callback ", domSent);
+                // send
+                if (!domSent) {
+                  mainFunctionality(currentUrl, tabs[0].id, currentColor);
+                  domSent = true;
+                }
+              });
+
+              // delete
+            } else {
+              console.log("deleting current page");
+
+              usersRef.child("/followed_links/").orderByChild('url')
+                .equalTo(currentUrl).once('value', function(snapshot) {
+
+                  if (snapshot.exists()) {
+                    var key = Object.keys(snapshot.val())[0];
+
+                    usersRef.child("/followed_links/").child(key).child("url").set(null);
+                  }
+                });
+            }
+          }
+
+        });
+      }
+    });
+}
+
+function mainFunctionality(currentUrl, tabId, currentColor) {
+  var usersRef = firebase.database().ref('/users/' + userId);
+  usersRef.child("/followed_links/").orderByChild('url')
+    .equalTo(currentUrl).once('value', function(snapshot) {
+      if (snapshot.exists()) {
+        displayEnabled(true);
+
+        usersRef.child("/history/").orderByChild('url')
+          .equalTo(currentUrl).once('value', function(snapshot) {
+
+            if (snapshot.exists()) {
+              oldDOM = Object.entries(snapshot.val())[0][1].dom;
+            }
+            // retrieving formatted dom from active tab
+            chrome.tabs.executeScript(tabId, {
+              code: 'var currentColor = "' + currentColor + '"; var oldDOM = ' + JSON.stringify(oldDOM) + '; ' + fullPath + '; ' + setColorToChanges + '; ' + setColorToDefault + '; (' + DOMFormatter + ')();'
+            }, function(results) {
+              console.log("took DOM");
+              results = JSON.parse(results);
+
+              var pageDOM = JSON.stringify(results.dom);
+              var changes = results.changes ? results.changes : 0;
+              var percentage = results.percentage;
+
+              document.querySelector(".differences h1").innerText = changes;
+
+              chrome.browserAction.setBadgeText({
+                tabId: tabId,
+                text: String(changes)
+              });
+              chrome.browserAction.setBadgeBackgroundColor({
+                color: [95, 92, 100, 255]
+              });
+
+              // First visit to this page?              
+              usersRef.child("/history/").orderByChild('url')
+                .equalTo(currentUrl).once('value', function(snapshot) {
+
+                  // Add dom for this URL if not existing
+                  if (!snapshot.exists()) {
+
+                    var newKey = usersRef.child("/history/").push().key;
+
+                    usersRef.child("/history/" + newKey).set({
+                      custom_colour: "not_set",
+                      changes: 0,
+                      changes_percentage: 0,
+                      date: new Date().toLocaleString(),
+                      dom: pageDOM,
+                      url: currentUrl
+                    });
+
+                    // Update the dom json
+                  } else {
+                    var custom_colour = Object.entries(snapshot.val())[0][1].custom_colour;
+                    if (custom_colour != "not_set") {
+                      displayColour(custom_colour);
+                      currentColor = custom_colour;
+
+                      //resend color
+                      chrome.tabs.executeScript(tabId, {
+                        code: ' currentColor = "' + currentColor + '"; (' + setColorToChanges + ')();'
+                      }, function() {});
+
+                    } else {
+                      console.log("colour not set");
+                    }
+
+                    snapshot.forEach(function(data) {
+                      if (data.child("url").val() == currentUrl) {
+
+                        var updates = {};
+                        updates["/history/" + data.key + "/dom"] = pageDOM;
+                        updates["/history/" + data.key + "/changes"] = changes;
+                        updates["/history/" + data.key + "/changes_percentage"] = percentage;
+                        updates["/history/" + data.key + "/date"] = new Date().toLocaleString();
+                        usersRef.update(updates);
+                      }
+                    });
+                  }
+
+                });
+            });
+          });
+
+      } else {
+        console.log("The url is not being followed");
+      }
+    });
 }
 
 /**
@@ -322,7 +340,7 @@ function DOMFormatter() {
       };
     }
   }
-  
+
   var numberDifference = 0;
   var contentDifferences = 0;
 
@@ -330,7 +348,7 @@ function DOMFormatter() {
 
     //check dom stuff
     numberDifference = Math.abs(myOldDOM.length - myNewDOM.length);
-    
+
     for (var i = 0; i < myNewDOM.length; i++) {
       for (var j = 0; j < myOldDOM.length; j++) {
         if (myNewDOM[i].selector == myOldDOM[j].selector) {
@@ -396,6 +414,7 @@ function setColorToDefault() {
   for (var i = 0; i < elements.length; i++) {
     elements[i].style.backgroundColor = "";
     elements[i].classList.remove(appClassName);
+    i--;
   }
 }
 
