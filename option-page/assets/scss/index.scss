@@ -51,6 +51,14 @@ table {
     }
 }
 
+.history,
+.followed {
+    p {
+        text-align: center;
+    }
+}
+
+
 .loading {
     height: 150px;
     position: relative;
@@ -78,7 +86,7 @@ table {
         tr {
             &:hover{
                 td {
-                    background-color: darken($background-color, 15%);
+                    background-color: darken($background-color, 5%);
                 }
             }
         }

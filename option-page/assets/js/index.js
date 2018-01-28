@@ -34,6 +34,7 @@ function initApp() {
                     printHistory(historyOnjects);
 
                 } else {
+                    noData(false);
                     console.log("no history");
                 }
             });
@@ -63,6 +64,7 @@ function initApp() {
                     printLinks(urls);
 
                 } else {
+                    noData(true);
                     console.log("no links");
                 }
             });
@@ -107,7 +109,7 @@ function printHistory(elements) {
             $('<td></td>').text(i + 1),
             $('<td></td>').text(current.url),
             $('<td></td>').text(current.changes),
-            $('<td></td>').text(current.changes_percentage),
+            $('<td></td>').text(current.changes_percentage + "%"),
             $('<td></td>').text(current.date)
         );
     }
@@ -151,7 +153,35 @@ function updateConfiguration(result) {
     }
 }
 
+function noData(links) {
+    if (links) {
+        $('.followed .loading').remove();
+        $('<p>No followed links</p>').insertBefore('.followed .btn');
+    } else {
+        $('.history .loading').remove();
+        $('<p>No history</p>').appendTo('.history');
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelector("#hi-color").addEventListener('change', function(event) {
+        var selector = event.target.id;
+        var value = event.target.value;
+
+        var userId = firebase.auth().currentUser.uid;
+        var usersRef = firebase.database().ref('/users/' + userId);
+
+        usersRef.once('value', function(snapshot) {
+            if (snapshot.exists()) {
+                var updates = {};
+                updates["/highlight_color"] = value;
+                usersRef.update(updates);
+            } else {
+                console.log("Tried to change default color and failed");
+            }
+        });
+    });
+
     document.querySelector("#addPageModal .btn-success")
         .addEventListener('click', function(event) {
 
