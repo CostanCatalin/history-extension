@@ -83,6 +83,7 @@ function chosenColor(color) {
 function printLinks(links) {
     $('.followed table').empty();
     $('.followed .loading').remove();
+    $('.followed .no-data').remove();
 
     for (var i = 0; i < links.length; i++) {
         element = links[i];
@@ -100,6 +101,7 @@ function printHistory(elements) {
     var $table = $('.history table');
     $table.empty();
     $('.history .loading').remove();
+    $('.history .no-data').remove();
 
     $('<tr><th>No.</th><th>URL</th><th>Changes</th><th>% Changed</th><th>Date</th></tr>').appendTo($table);
     for (var i = 0; i < elements.length; i++) {
@@ -116,6 +118,7 @@ function printHistory(elements) {
 }
 
 function deleteLink(url) {
+    $('.followed table').empty();
     var userId = firebase.auth().currentUser.uid;
     var followedRef = firebase.database().ref('/users/' + userId + '/followed_links');
 
@@ -156,10 +159,10 @@ function updateConfiguration(result) {
 function noData(links) {
     if (links) {
         $('.followed .loading').remove();
-        $('<p>No followed links</p>').insertBefore('.followed .btn');
+        $('<p class="no-data">No followed links</p>').insertBefore('.followed .btn');
     } else {
         $('.history .loading').remove();
-        $('<p>No history</p>').appendTo('.history');
+        $('<p class="no-data">No history</p>').appendTo('.history');
     }
 }
 
