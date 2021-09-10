@@ -1,9 +1,8 @@
 # history-extension
-A chrome extension that shows you the differences on a website page between the current visit and the previous one.
+A chrome extension that highlights the differences between the current and the previous visit of a webpage.
 
-It comes along with an options page that also displays data about the changes history.
-
-It's been built with the help of Firebase, which has been used for authentication through Google and data persistance.
+It comes along with an options page where you can edit the styling of the highlight and see data about the changes history.
+It's been built with the help of Firebase, which has been used for authentication (through Google) and data persistance.
 
 
 ### Prerequisites
